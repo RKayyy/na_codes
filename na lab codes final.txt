@@ -1,0 +1,429 @@
+BISECTION *************************************
+
+clc;
+close all;
+
+f = @(x)(2^x - 5*x +2);
+a = input("Enter a");
+b = input("Enter b");
+tol = input("Enter tol");
+
+if(f(a)*f(b)<0)
+    while(abs(a-c)>=tol || abs(b-c)>=tol)
+        c = (a+b)/2;
+        if(f(c)==0)
+            fprintf("The root is %f", c);
+        elseif(f(a)*f(c)<0)
+            b = c;
+        else
+            a = c;
+        end
+    end
+    
+    fprintf("The root is %f", c);
+else
+    fprintf("Root does not exist between %f and %f", a, b);
+end
+
+
+
+FIXED POINT ************************************
+
+clc;
+close all;
+syms x;
+
+f = @(x)(2^x-5*x+2);
+g = @(x)((2^x+2)/5);
+
+dg = inline(diff(g, x));
+
+
+disp(dg);
+x0 = input("enter initial approximation");
+e = input("input tolerance");
+N = 100;
+for i = 1:N
+    x1 = g(x0);
+    if(abs(x1-x0)<e)
+        fprintf("the root is %f", x1);
+        break;
+    else
+        x0 = x1;
+    end
+end
+
+x1 = g(x0);
+
+
+
+NEWTON ***************************************
+
+clc;
+close all;
+syms x;
+
+f = @(x)(2^x-5*x+2);
+df = inline(diff(f,x));
+
+
+x0 = input("Enter initial approximation ");
+e = input("enter tolerance ");
+n = input("enter max. no. of iterations ");
+
+x1 = x0-(f(x0)/df(x0));
+i=1;
+
+while(i<=n)
+    if(abs(x1-x0)>e)
+        x0=x1;
+        x1=x0-(f(x0)/df(x0));
+        i=i+1;
+    else
+        disp(x1);
+        break;
+    end
+end
+
+
+secant ****************************************
+
+clc;
+close all;
+
+syms x;
+f = @(x)(x^2-9);
+df = inline(diff(f,x));
+
+x0 = input("enter 1st approximation\n");
+x1 = input("enter 2nd approximation\n");
+e = input("enter tolerance\n");
+N = input("enter max. no. of iterations\n");
+
+for i = 1:N
+    x2 = x1 - (f(x1)*((x1-x0)/(f(x1)-f(x0))));
+    if(abs(x2-x1)<e)
+        fprintf("The root is %f", x2);
+        break;
+    else
+        x0 = x1;
+        x1 = x2;
+    end
+end
+
+
+guass elimination *************************
+
+clc;
+close all;
+
+A = [1,2,3;8,4,1;9,4,1];
+B = [6;7;1];
+n = length(A);
+C = [A B];
+
+x = zeros(n,1);
+for i=1:n-1
+    for j=i+1:n
+        m = C(j,i)/C(i,i);
+        C(j,:) = C(j,:) - m*C(i,:);
+    end
+end
+
+x(n)= C(n,n+1)/C(n,n);
+for i=n-1:-1:1
+    x(i) = (C(i, n+1) - C(i,i+1:n)*x(i+1:n))/C(i,i);
+end
+disp(x);
+
+LU factorisation *******************************
+
+clc;
+close all;
+
+A = [0.3,0.52,1;0.5,1,1.9;0.1,0.3,0.5];
+B = [-0.01;0.67;-0.44];
+n = length(A);
+L = zeros(n,n);
+x = zeros(n,1);
+y = zeros(n,1);
+
+for i=1:n-1
+    for j=i+1:n
+        m = A(j,i)/A(i,i);
+        L(j,i) = m;
+        A(j,:) = A(j,:) - m*A(i,:);
+    end
+end
+
+for k=1:n
+    L(k,k) = 1;
+end
+
+disp(A);
+disp(L);
+
+
+POWER METHOD *************************************
+clc;
+close all;
+A = input("enter matrix a ");
+B = input("Enter initial approximation");
+
+for i=1:100
+    y = A*B;
+    n = norm(y, 'inf');
+    B = y/n;
+    K(i)=n;
+    if(i>1)
+        if(abs(K(i)-K(i-1))<0.001)
+            K(i)
+            B
+            break;
+        end
+    end
+
+end
+
+
+LAGRANGE *************************************
+
+clear;
+close all;
+
+A = input("Enter the points ");
+B = input("Enter value at points ");
+x = input("Enter the value at which polynomial has to be interpolated ");
+[m,n] = size(A);
+
+sum = 0;
+for i=1:n
+    l = 1;
+    for j=1:n
+        if(j~=i)
+            l = ((x-A(j))/(A(i)-A(j)))*l;
+        end
+    end
+    sum = sum + l*B(i);
+end
+disp(sum);
+
+
+trapezoidal rule ******************************
+
+clc;
+close all;
+f = @(x)((cos(x))^2);
+
+a = input("Enter lower limit ");
+b = input("Enter upper limit ");
+
+n = input("Enter no. of intervals ");
+h = (b-a)/n;
+
+sum = (f(b)+f(a))/2;
+for i=1:n-1
+    x = a + i*h;
+    sum = sum + f(x);
+end
+sum = h*sum;
+disp(sum);
+
+simpson's rule ******************************
+
+clc;
+close all;
+f = @(x)((cos(x))^2);
+
+a = input("Enter a ");
+b = input("Enter b ");
+n = input("Enter the no. of intervals ");
+
+h = (b-a)/n;
+
+sum = f(a)+f(b);
+for i=1:n-1
+    x = a + i*h;
+    if (rem(i,2)==0)
+        sum = sum + 2*f(x);
+    else
+        sum = sum + 4*f(x);
+    end
+end
+
+sum = (h/3)*sum;
+disp(sum);
+
+euler ****************************************
+
+clc;
+close all;
+f = @(x,y)(y-x^2+1);
+x0 = input("initial value ");
+y0 = input("funxtion value at x ");
+h = input("enter step size ");
+x1 = input("enter the point for which f is to be calculated ");
+n = (x1-x0)/h;
+
+for i=1:n
+    y1 = y0 + h*f(x0,y0);
+    x0 = x0 + h;
+    y0=y1;
+
+
+end
+disp(y1);
+
+modified euler ********************************
+
+clc;
+close all;
+f = @(x,y)(-2*x*(y^(2)));
+x0 = input("enter initial value ");
+y0 = input("enter value of f at x ");
+h = input("enter step size ");
+x1 = input("enter value at which f to be calculated ");
+
+n = (x1-x0)/h;
+for i=1:h
+    k1 = h*f(x0,y0);
+    k2 = h*f(x0+h, y0+k1);
+    y1 = y0 + ((k1+k2)/2);
+    x0 = x0+h;
+    y0 = y1;
+end
+disp(y1);
+
+runge kutta *************************************
+
+clc;
+close all;
+
+f = @(x,y)((2*x*y+exp(x))/(x^2+x*exp(x)));
+
+x0 = input("enter starting point ");
+y0 = input("entter func value at t0 ");
+h = input("enter step size ");
+x1 = input("enter value at which f to be calculated ");
+
+n = round(x1-x0)/h;
+
+for i=1:n
+    k1 = h*f(x0,y0);
+    k2 = h*f(x0+(h/2), y0+(k1/2));
+    k3 = h*f(x0+(h/2), y0+(k2/2));
+    k4 = h*f(x0+h, y0+k3);
+    y1 = y0+(k1+2*k2+2*k3+k4)/6;
+    x0 =x0+h;
+    y0 = y1;
+end
+disp(y1);
+
+
+guass siedel *********************************
+
+clc;
+close all;
+format long
+
+A=[4.63 -1.21 3.22; -3.07 5.48 2.11; 1.26 3.11 4.57];
+
+[m,n]=size(A);
+B=[2.22;-3.17;5.11];
+x0=zeros(n,1);
+x=zeros(n,1);
+
+tol=input("Enter tolerance : ");
+N=input("Enter max num of iterations : ");
+
+for k=1:N
+    for i=1:n
+        sum=0;
+        for j=1:n
+            if(j~=i)
+              sum=sum+x0(j).*A(i,j);  
+            end
+        end
+        x=x0;
+        x0(i)=(B(i)-sum)./A(i,i);
+    end
+    if norm((x-x0),'inf')<tol
+            disp(x0)
+            break
+    end        
+end
+disp(k)
+disp("The answer is : ");
+disp(x0)
+
+
+sor *******************************************
+
+clc
+clear
+format long
+
+A=[4 1 -1 1; 1 4 -1 -1; -1 -1 5 1;1 -1 1 3];
+[m,n]=size(A);
+w=1.2;
+B=[-2;-1;0;1];
+x0=[0;0;0;0];
+x=[0;0;0;0];
+
+tol=input("Enter tolerance : ");
+N=input("Enter max num of iterations : ");
+for k=1:N
+    for i=1:n
+        sum=0;
+        for j=1:n
+            if(j~=i)
+              sum=sum+x0(j).*A(i,j);  
+            end
+        end
+        x=x0;
+        x0(i)=((1-w)*x0(i)+(w/A(i,i))*(B(i)-sum));
+    end
+    if norm((x-x0),'inf')<tol
+            disp(x0)
+            break
+    end        
+end
+disp(k)
+disp("The answer is : ");
+round(x0);
+
+
+newton's divided difference **********************
+
+clc
+clear
+format short
+atX = [3 1 0 2];
+[m,n]=size(atX);
+atY =[8 2 1 4];
+diffTable=zeros(n-1,n-1);
+
+x=input("Enter point to be interpolated : ");
+
+for i=1:n-1
+    diffTable(i,1)=(atY(i+1)-atY(i))/(atX(i+1)-atX(i));
+end
+
+for i=2:n-1
+    for j=1:(n-i)
+        diffTable(j,i)=(diffTable(j+1,i-1)-diffTable(j,i-1))/(atX(j+i)-atX(j));
+    end
+    
+end
+disp("The difference table generated is : ")
+disp(diffTable)
+
+sum=atY(1);
+for i=1:n-1
+    prod=1;
+    for j=1:i
+        prod=prod*(x-atX(j));
+    end
+    sum=sum+(prod*(diffTable(1,i)));
+end
+disp(sum);
